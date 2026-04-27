@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#fff1d6"/>
+  <circle cx="400" cy="330" r="150" fill="#ef8f75"/>
+  <path d="M270 240 310 120l90 100M530 240 490 120l-90 100" fill="#ef8f75"/>
+  <circle cx="345" cy="315" r="18" fill="#3f3328"/>
+  <circle cx="455" cy="315" r="18" fill="#3f3328"/>
+  <path d="M385 380h30l-15 18z" fill="#3f3328"/>
+  <path d="M335 425c45 35 85 35 130 0" fill="none" stroke="#3f3328" stroke-width="14" stroke-linecap="round"/>
+  <text x="400" y="535" text-anchor="middle" font-size="38" fill="#6d5846" font-family="Arial, sans-serif">江理工喵喵队</text>
+</svg>

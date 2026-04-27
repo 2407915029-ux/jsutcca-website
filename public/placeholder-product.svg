@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#fff8ec"/>
+  <rect x="215" y="120" width="370" height="350" rx="38" fill="#f8c96a"/>
+  <circle cx="400" cy="285" r="100" fill="#ef8f75"/>
+  <path d="M330 225 355 150l55 65M470 225 445 150l-55 65" fill="#ef8f75"/>
+  <circle cx="365" cy="278" r="12" fill="#3f3328"/>
+  <circle cx="435" cy="278" r="12" fill="#3f3328"/>
+  <path d="M390 325h20l-10 13z" fill="#3f3328"/>
+  <text x="400" y="530" text-anchor="middle" font-size="34" fill="#6d5846" font-family="Arial, sans-serif">公益周边</text>
+</svg>

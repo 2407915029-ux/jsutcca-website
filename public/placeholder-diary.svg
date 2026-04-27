@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520">
+  <rect width="800" height="520" fill="#e8f4de"/>
+  <rect x="120" y="110" width="560" height="310" rx="28" fill="#fff8ec"/>
+  <path d="M210 340c60-110 120-150 180-80 55-70 120-55 200 80z" fill="#8ebf8b"/>
+  <circle cx="540" cy="185" r="46" fill="#f8c96a"/>
+  <text x="400" y="465" text-anchor="middle" font-size="34" fill="#3f3328" font-family="Arial, sans-serif">活动日记</text>
+</svg>

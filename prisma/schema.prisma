@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Cat {
+  id                   String   @id @default(cuid())
+  name                 String
+  status               CatStatus
+  gender               Gender
+  age                  String?
+  color                String?
+  location             String?
+  description          String
+  personality          String?
+  healthStatus         String?
+  sterilized           Boolean  @default(false)
+  dewormed             Boolean  @default(false)
+  friendly             Boolean?
+  adoptionRequirements String?
+  rescueRecord         String?
+  medicalRecord        String?
+  images               String[]  @default([])
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+enum CatStatus {
+  available
+  adopted
+  deceased
+}
+
+enum Gender {
+  male
+  female
+  unknown
+}
+
+model DiaryPost {
+  id         String    @id @default(cuid())
+  title      String
+  type       DiaryType
+  summary    String
+  content    String
+  coverImage String?
+  videoUrl   String?
+  images     String[]  @default([])
+  likes      Int       @default(0)
+  comments   Comment[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+enum DiaryType {
+  sterilization
+  medical
+  feeding
+  offline_event
+  adoption
+  daily
+  other
+}
+
+model Comment {
+  id          String    @id @default(cuid())
+  diaryPostId String
+  diaryPost   DiaryPost @relation(fields: [diaryPostId], references: [id], onDelete: Cascade)
+  nickname    String
+  content     String
+  createdAt   DateTime  @default(now())
+}
