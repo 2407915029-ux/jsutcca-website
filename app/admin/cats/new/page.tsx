@@ -4,7 +4,7 @@ import { CatForm } from "@/components/admin/CatForm";
 export default function NewCatPage() {
   return (
     <div>
-      <AdminHeader title="新增猫咪" />
+      <AdminHeader titleKey="admin.newCat" />
       <CatForm />
     </div>
   );

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Footer } from "@/components/Footer";
+import { LanguageProvider } from "@/components/LanguageProvider";
 import { Navbar } from "@/components/Navbar";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -29,9 +30,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="zh-CN">
       <body className="min-h-screen bg-cream text-ink antialiased">
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
+        <LanguageProvider>
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+        </LanguageProvider>
       </body>
     </html>
   );

@@ -4,7 +4,7 @@ import { DiaryForm } from "@/components/admin/DiaryForm";
 export default function NewDiaryPage() {
   return (
     <div>
-      <AdminHeader title="新增活动日记" />
+      <AdminHeader titleKey="admin.newDiary" />
       <DiaryForm />
     </div>
   );

@@ -10,7 +10,7 @@ export default async function EditCatPage({ params }: { params: { id: string } }
   if (!cat) notFound();
   return (
     <div>
-      <AdminHeader title={`编辑猫咪：${cat.name}`} />
+      <AdminHeader titleKey="admin.editCat" titleValues={{ name: cat.name }} />
       <CatForm cat={cat} />
     </div>
   );

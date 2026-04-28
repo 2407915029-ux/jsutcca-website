@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { DiaryPost } from "@prisma/client";
 import { Heart, MessageCircle } from "lucide-react";
 import { DiaryTypeBadge } from "@/components/StatusBadge";
+import { T } from "@/components/LanguageProvider";
 
 type DiaryCardPost = DiaryPost & { _count?: { comments: number } };
 
@@ -31,7 +32,7 @@ export function DiaryCard({ post }: { post: DiaryCardPost }) {
             </span>
           </div>
           <Link href={`/diary/${post.id}`} className="rounded-full bg-leaf px-4 py-2 text-sm font-semibold text-white hover:bg-green-700">
-            查看详情
+            <T k="common.viewDetails" />
           </Link>
         </div>
       </div>

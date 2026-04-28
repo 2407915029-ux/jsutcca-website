@@ -1,4 +1,5 @@
 import type { CatStatus, DiaryType, Gender } from "@prisma/client";
+import { Language, translate } from "@/lib/i18n";
 
 export const catStatusLabels: Record<CatStatus, string> = {
   available: "待领养",
@@ -31,3 +32,15 @@ export const diaryTypes = Object.entries(diaryTypeLabels).map(([value, label]) =
   value,
   label
 }));
+
+export function getCatStatusLabel(status: CatStatus, language: Language) {
+  return translate(language, `catStatus.${status}`);
+}
+
+export function getGenderLabel(gender: Gender, language: Language) {
+  return translate(language, `gender.${gender}`);
+}
+
+export function getDiaryTypeLabel(type: DiaryType, language: Language) {
+  return translate(language, `diaryType.${type}`);
+}

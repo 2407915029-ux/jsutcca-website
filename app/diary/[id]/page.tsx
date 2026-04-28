@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import { notFound } from "next/navigation";
 import { CommentSection } from "@/components/CommentSection";
 import { DiaryTypeBadge } from "@/components/StatusBadge";
+import { T } from "@/components/LanguageProvider";
 import { prisma } from "@/lib/prisma";
 import { getVideoEmbed } from "@/lib/video";
 
@@ -34,20 +35,20 @@ export default async function DiaryDetailPage({ params }: { params: { id: string
         </div>
         {video ? (
           <section className="mt-8">
-            <h2 className="mb-3 text-xl font-bold">活动视频</h2>
+            <h2 className="mb-3 text-xl font-bold"><T k="diary.video" /></h2>
             {video.type === "video" ? (
               <video src={video.src} controls className="aspect-video w-full rounded-lg bg-black" />
             ) : video.type === "iframe" ? (
               <iframe
                 src={video.src}
-                title={`${post.title}视频`}
+                title={`${post.title} video`}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
                 className="aspect-video w-full rounded-lg border-0 bg-black"
               />
             ) : (
               <a href={video.src} target="_blank" rel="noreferrer" className="inline-flex rounded-lg bg-orange-50 px-4 py-3 font-semibold text-green-700">
-                打开视频链接
+                <T k="diary.openVideo" />
               </a>
             )}
           </section>
@@ -56,7 +57,7 @@ export default async function DiaryDetailPage({ params }: { params: { id: string
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
             {images.map((image) => (
               <div key={image} className="relative aspect-[4/3] overflow-hidden rounded-lg bg-orange-50">
-                <Image src={image} alt={`${post.title}图片`} fill className="object-cover" />
+                <Image src={image} alt={`${post.title} image`} fill className="object-cover" />
               </div>
             ))}
           </div>

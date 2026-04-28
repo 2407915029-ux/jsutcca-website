@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { Cat, HeartHandshake } from "lucide-react";
 import { getAdminSession } from "@/lib/auth";
+import { T } from "@/components/LanguageProvider";
+import { LanguageToggle } from "@/components/LanguageToggle";
 
 const links = [
-  { href: "/", label: "首页" },
-  { href: "/cats", label: "猫咪列表" },
-  { href: "/donate", label: "捐款途径" },
-  { href: "/shop", label: "周边商品" },
-  { href: "/diary", label: "活动日记" }
+  { href: "/", labelKey: "nav.home" },
+  { href: "/cats", labelKey: "nav.cats" },
+  { href: "/donate", labelKey: "nav.donate" },
+  { href: "/shop", labelKey: "nav.shop" },
+  { href: "/diary", labelKey: "nav.diary" }
 ];
 
 export async function Navbar() {
@@ -20,20 +22,21 @@ export async function Navbar() {
           <span className="flex h-10 w-10 items-center justify-center rounded-full bg-salmon text-white">
             <Cat size={22} />
           </span>
-          江理工喵喵队
+          <T k="site.name" />
         </Link>
         <nav className="flex flex-wrap items-center gap-2 text-sm font-medium text-stone-700">
           {links.map((link) => (
             <Link key={link.href} href={link.href} className="rounded-full px-3 py-2 hover:bg-white">
-              {link.label}
+              <T k={link.labelKey} />
             </Link>
           ))}
+          <LanguageToggle />
           <Link
             href={session ? "/admin/dashboard" : "/admin/login"}
             className="inline-flex items-center gap-1 rounded-full bg-leaf px-3 py-2 text-white hover:bg-green-700"
           >
             <HeartHandshake size={16} />
-            后台
+            <T k="nav.admin" />
           </Link>
         </nav>
       </div>

@@ -3,7 +3,7 @@ import type { CatStatus } from "@prisma/client";
 import { AdminHeader } from "@/components/AdminHeader";
 import { DeleteButton } from "@/components/admin/DeleteButton";
 import { CatStatusBadge } from "@/components/StatusBadge";
-import { catStatusLabels, genderLabels } from "@/lib/labels";
+import { T } from "@/components/LanguageProvider";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -16,25 +16,25 @@ export default async function AdminCatsPage({ searchParams }: { searchParams: { 
 
   return (
     <div>
-      <AdminHeader title="猫咪管理" />
+      <AdminHeader titleKey="admin.catManagement" />
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap gap-2">
-          <Link href="/admin/cats" className={`rounded-full px-4 py-2 text-sm font-semibold ${!status ? "bg-salmon text-white" : "bg-white"}`}>全部</Link>
-          {statuses.map((item) => <Link key={item} href={`/admin/cats?status=${item}`} className={`rounded-full px-4 py-2 text-sm font-semibold ${status === item ? "bg-salmon text-white" : "bg-white"}`}>{catStatusLabels[item]}</Link>)}
+          <Link href="/admin/cats" className={`rounded-full px-4 py-2 text-sm font-semibold ${!status ? "bg-salmon text-white" : "bg-white"}`}><T k="common.all" /></Link>
+          {statuses.map((item) => <Link key={item} href={`/admin/cats?status=${item}`} className={`rounded-full px-4 py-2 text-sm font-semibold ${status === item ? "bg-salmon text-white" : "bg-white"}`}><T k={`catStatus.${item}`} /></Link>)}
         </div>
-        <Link href="/admin/cats/new" className="rounded-lg bg-leaf px-4 py-2 text-sm font-semibold text-white">新增猫咪</Link>
+        <Link href="/admin/cats/new" className="rounded-lg bg-leaf px-4 py-2 text-sm font-semibold text-white"><T k="admin.newCat" /></Link>
       </div>
       <div className="overflow-hidden rounded-lg bg-white shadow-soft">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[720px] text-left text-sm">
             <thead className="bg-orange-50 text-stone-600">
               <tr>
-                <th className="p-4">名字</th>
-                <th className="p-4">状态</th>
-                <th className="p-4">性别</th>
-                <th className="p-4">地点</th>
-                <th className="p-4">更新时间</th>
-                <th className="p-4">操作</th>
+                <th className="p-4"><T k="common.name" /></th>
+                <th className="p-4"><T k="common.status" /></th>
+                <th className="p-4"><T k="common.gender" /></th>
+                <th className="p-4"><T k="common.location" /></th>
+                <th className="p-4"><T k="common.updatedAt" /></th>
+                <th className="p-4"><T k="common.actions" /></th>
               </tr>
             </thead>
             <tbody>
@@ -42,16 +42,16 @@ export default async function AdminCatsPage({ searchParams }: { searchParams: { 
                 <tr key={cat.id} className="border-t border-orange-100">
                   <td className="p-4 font-semibold">{cat.name}</td>
                   <td className="p-4"><CatStatusBadge status={cat.status} /></td>
-                  <td className="p-4">{genderLabels[cat.gender]}</td>
-                  <td className="p-4">{cat.location || "待补充"}</td>
+                  <td className="p-4"><T k={`gender.${cat.gender}`} /></td>
+                  <td className="p-4">{cat.location || <T k="common.notProvided" />}</td>
                   <td className="p-4">{cat.updatedAt.toLocaleDateString("zh-CN")}</td>
                   <td className="flex gap-2 p-4">
-                    <Link href={`/admin/cats/${cat.id}/edit`} className="rounded-lg bg-orange-50 px-3 py-2 font-semibold hover:bg-orange-100">编辑</Link>
-                    <DeleteButton endpoint={`/api/admin/cats/${cat.id}`} confirmText={`确认删除猫咪“${cat.name}”吗？`} />
+                    <Link href={`/admin/cats/${cat.id}/edit`} className="rounded-lg bg-orange-50 px-3 py-2 font-semibold hover:bg-orange-100"><T k="common.edit" /></Link>
+                    <DeleteButton endpoint={`/api/admin/cats/${cat.id}`} confirmKey="admin.deleteCatConfirm" confirmValues={{ name: cat.name }} />
                   </td>
                 </tr>
               ))}
-              {!cats.length ? <tr><td className="p-6 text-center text-stone-500" colSpan={6}>暂时没有猫咪档案</td></tr> : null}
+              {!cats.length ? <tr><td className="p-6 text-center text-stone-500" colSpan={6}><T k="admin.noCats" /></td></tr> : null}
             </tbody>
           </table>
         </div>

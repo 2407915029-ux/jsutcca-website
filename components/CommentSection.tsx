@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Heart, MessageCircle, Send } from "lucide-react";
+import { useLanguage } from "@/components/LanguageProvider";
 
 type Comment = {
   id: string;
@@ -26,22 +27,23 @@ export function CommentSection({
   const [content, setContent] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const { t, language } = useLanguage();
 
   async function like() {
     if (liked) {
-      setMessage("这个浏览器已经点过赞啦");
+      setMessage(t("comments.likedAlready"));
       return;
     }
     const response = await fetch(`/api/diary/${diaryPostId}/like`, { method: "POST" });
     if (!response.ok) {
-      setMessage("点赞失败，请稍后再试");
+      setMessage(t("comments.likeFailed"));
       return;
     }
     const data = await response.json();
     setLikes(data.likes);
     setLiked(true);
     localStorage.setItem(`liked:${diaryPostId}`, "1");
-    setMessage("感谢你的喜欢");
+    setMessage(t("comments.likeThanks"));
   }
 
   async function submitComment(event: React.FormEvent<HTMLFormElement>) {
@@ -56,25 +58,25 @@ export function CommentSection({
     const data = await response.json();
     setSubmitting(false);
     if (!response.ok) {
-      setMessage(data.message || "评论提交失败");
+      setMessage(t("comments.submitFailed"));
       return;
     }
     setComments([data, ...comments]);
     setContent("");
     setNickname("");
-    setMessage("评论已发布");
+    setMessage(t("comments.published"));
   }
 
   return (
     <section className="mt-10 rounded-lg bg-white p-5 shadow-soft sm:p-7">
       <div className="flex flex-col gap-3 border-b border-orange-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-xl font-bold">互动区</h2>
-          <p className="mt-1 text-sm text-stone-500">欢迎留下温柔的鼓励和补充信息。</p>
+          <h2 className="text-xl font-bold">{t("comments.area")}</h2>
+          <p className="mt-1 text-sm text-stone-500">{t("comments.prompt")}</p>
         </div>
         <button onClick={like} className="inline-flex items-center justify-center gap-2 rounded-full bg-salmon px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700">
           <Heart size={17} fill={liked ? "currentColor" : "none"} />
-          {likes} 个喜欢
+          {t("comments.likeCount", { count: likes })}
         </button>
       </div>
 
@@ -83,14 +85,14 @@ export function CommentSection({
           value={nickname}
           onChange={(event) => setNickname(event.target.value)}
           maxLength={30}
-          placeholder="昵称，不填则显示匿名用户"
+          placeholder={t("comments.nicknamePlaceholder")}
           className="rounded-lg border border-orange-200 bg-cream px-4 py-3 outline-none focus:border-salmon"
         />
         <textarea
           value={content}
           onChange={(event) => setContent(event.target.value)}
           maxLength={500}
-          placeholder="写下你的评论，最多 500 字"
+          placeholder={t("comments.contentPlaceholder")}
           rows={4}
           className="rounded-lg border border-orange-200 bg-cream px-4 py-3 outline-none focus:border-salmon"
         />
@@ -98,7 +100,7 @@ export function CommentSection({
           <p className="text-sm text-stone-500">{message || `${content.length}/500`}</p>
           <button disabled={submitting} className="inline-flex items-center justify-center gap-2 rounded-lg bg-leaf px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-60">
             <Send size={16} />
-            {submitting ? "提交中..." : "发表评论"}
+            {submitting ? t("comments.submitting") : t("comments.submit")}
           </button>
         </div>
       </form>
@@ -106,16 +108,16 @@ export function CommentSection({
       <div className="mt-8 space-y-4">
         <h3 className="flex items-center gap-2 font-bold">
           <MessageCircle size={18} />
-          评论
+          {t("common.comments")}
         </h3>
         {comments.length === 0 ? (
-          <p className="rounded-lg bg-orange-50 p-4 text-sm text-stone-600">还没有评论，来做第一个留言的人吧。</p>
+          <p className="rounded-lg bg-orange-50 p-4 text-sm text-stone-600">{t("comments.empty")}</p>
         ) : (
           comments.map((comment) => (
             <article key={comment.id} className="rounded-lg bg-orange-50 p-4">
               <div className="flex items-center justify-between gap-3">
                 <p className="font-semibold">{comment.nickname}</p>
-                <time className="text-xs text-stone-500">{new Date(comment.createdAt).toLocaleString("zh-CN")}</time>
+                <time className="text-xs text-stone-500">{new Date(comment.createdAt).toLocaleString(language === "zh" ? "zh-CN" : "en-US")}</time>
               </div>
               <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-stone-700">{comment.content}</p>
             </article>

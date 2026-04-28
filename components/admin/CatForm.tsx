@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Cat } from "@prisma/client";
 import { ImageUrlInput } from "@/components/ImageUrlInput";
 import { CloudinaryUploadButton } from "@/components/admin/CloudinaryUploadButton";
-import { catStatusLabels, genderLabels } from "@/lib/labels";
+import { useLanguage } from "@/components/LanguageProvider";
 
 type CatPayload = Omit<Cat, "id" | "createdAt" | "updatedAt">;
 
@@ -33,6 +33,17 @@ export function CatForm({ cat }: { cat?: Cat }) {
   const [form, setForm] = useState<CatPayload>(cat ? { ...cat } : emptyCat);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const { t } = useLanguage();
+  const catStatusOptions = {
+    available: t("catStatus.available"),
+    adopted: t("catStatus.adopted"),
+    deceased: t("catStatus.deceased")
+  };
+  const genderOptions = {
+    male: t("gender.male"),
+    female: t("gender.female"),
+    unknown: t("gender.unknown")
+  };
 
   function setField<K extends keyof CatPayload>(key: K, value: CatPayload[K]) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -50,7 +61,7 @@ export function CatForm({ cat }: { cat?: Cat }) {
     const data = await response.json();
     setLoading(false);
     if (!response.ok) {
-      setMessage(data.message || "保存失败");
+      setMessage(t("common.saveFailed"));
       return;
     }
     router.push("/admin/cats");
@@ -60,34 +71,34 @@ export function CatForm({ cat }: { cat?: Cat }) {
   return (
     <form onSubmit={submit} className="grid gap-5 rounded-lg bg-white p-5 shadow-soft sm:p-6">
       <div className="grid gap-4 md:grid-cols-3">
-        <Input label="名字（必填）" value={form.name} onChange={(value) => setField("name", value)} required />
-        <Select label="状态" value={form.status} onChange={(value) => setField("status", value as CatPayload["status"])} options={catStatusLabels} />
-        <Select label="性别" value={form.gender} onChange={(value) => setField("gender", value as CatPayload["gender"])} options={genderLabels} />
-        <Input label="年龄" value={form.age || ""} onChange={(value) => setField("age", value)} />
-        <Input label="花色" value={form.color || ""} onChange={(value) => setField("color", value)} />
-        <Input label="常出没地点" value={form.location || ""} onChange={(value) => setField("location", value)} />
+        <Input label={t("admin.catNameRequired")} value={form.name} onChange={(value) => setField("name", value)} required />
+        <Select label={t("admin.status")} value={form.status} onChange={(value) => setField("status", value as CatPayload["status"])} options={catStatusOptions} />
+        <Select label={t("admin.gender")} value={form.gender} onChange={(value) => setField("gender", value as CatPayload["gender"])} options={genderOptions} />
+        <Input label={t("admin.age")} value={form.age || ""} onChange={(value) => setField("age", value)} />
+        <Input label={t("admin.color")} value={form.color || ""} onChange={(value) => setField("color", value)} />
+        <Input label={t("admin.location")} value={form.location || ""} onChange={(value) => setField("location", value)} />
       </div>
-      <Textarea label="简介（必填）" value={form.description} onChange={(value) => setField("description", value)} required />
+      <Textarea label={t("admin.descriptionRequired")} value={form.description} onChange={(value) => setField("description", value)} required />
       <div className="grid gap-4 md:grid-cols-3">
-        <Input label="性格描述" value={form.personality || ""} onChange={(value) => setField("personality", value)} />
-        <Input label="健康情况" value={form.healthStatus || ""} onChange={(value) => setField("healthStatus", value)} />
-        <Select label="是否亲人" value={form.friendly === null ? "unknown" : form.friendly ? "true" : "false"} onChange={(value) => setField("friendly", value === "unknown" ? null : value === "true")} options={{ true: "亲人", false: "待观察", unknown: "未知" }} />
+        <Input label={t("admin.personality")} value={form.personality || ""} onChange={(value) => setField("personality", value)} />
+        <Input label={t("admin.health")} value={form.healthStatus || ""} onChange={(value) => setField("healthStatus", value)} />
+        <Select label={t("admin.friendly")} value={form.friendly === null ? "unknown" : form.friendly ? "true" : "false"} onChange={(value) => setField("friendly", value === "unknown" ? null : value === "true")} options={{ true: t("admin.adoptedFriendly"), false: t("admin.observe"), unknown: t("admin.unknown") }} />
       </div>
       <div className="flex flex-wrap gap-4">
-        <Checkbox label="已绝育" checked={form.sterilized} onChange={(value) => setField("sterilized", value)} />
-        <Checkbox label="已驱虫" checked={form.dewormed} onChange={(value) => setField("dewormed", value)} />
+        <Checkbox label={t("admin.sterilized")} checked={form.sterilized} onChange={(value) => setField("sterilized", value)} />
+        <Checkbox label={t("admin.dewormed")} checked={form.dewormed} onChange={(value) => setField("dewormed", value)} />
       </div>
-      <Textarea label="领养要求或备注" value={form.adoptionRequirements || ""} onChange={(value) => setField("adoptionRequirements", value)} />
-      <Textarea label="救助记录" value={form.rescueRecord || ""} onChange={(value) => setField("rescueRecord", value)} />
-      <Textarea label="医疗记录" value={form.medicalRecord || ""} onChange={(value) => setField("medicalRecord", value)} />
+      <Textarea label={t("admin.adoptionNotes")} value={form.adoptionRequirements || ""} onChange={(value) => setField("adoptionRequirements", value)} />
+      <Textarea label={t("admin.rescueRecord")} value={form.rescueRecord || ""} onChange={(value) => setField("rescueRecord", value)} />
+      <Textarea label={t("admin.medicalRecord")} value={form.medicalRecord || ""} onChange={(value) => setField("medicalRecord", value)} />
       <label className="grid gap-2 text-sm font-semibold">
-        图片 URL <span className="font-normal text-stone-500">一行一个，可手动输入，也可上传到 Cloudinary 后自动填入</span>
+        {t("admin.imageUrls")} <span className="font-normal text-stone-500">{t("admin.imageUrlsHint")}</span>
         <CloudinaryUploadButton folder="meow-team/cats" onUploaded={(urls) => setField("images", [...form.images, ...urls])} />
         <ImageUrlInput values={form.images} onChange={(values) => setField("images", values)} />
       </label>
       {message ? <p className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{message}</p> : null}
       <button disabled={loading} className="rounded-lg bg-salmon px-4 py-3 font-semibold text-white hover:bg-orange-700 disabled:opacity-60">
-        {loading ? "保存中..." : "保存猫咪信息"}
+        {loading ? t("common.saving") : t("admin.saveCat")}
       </button>
     </form>
   );

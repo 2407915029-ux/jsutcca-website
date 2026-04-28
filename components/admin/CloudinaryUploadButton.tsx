@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { UploadCloud } from "lucide-react";
+import { useLanguage } from "@/components/LanguageProvider";
 
 type SignatureResponse = {
   cloudName: string;
@@ -25,6 +26,7 @@ export function CloudinaryUploadButton({
   const inputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState("");
   const [uploading, setUploading] = useState(false);
+  const { t } = useLanguage();
 
   async function upload(files: FileList | null) {
     if (!files?.length) return;
@@ -39,7 +41,7 @@ export function CloudinaryUploadButton({
       });
       const signature = (await signatureResponse.json()) as SignatureResponse;
       if (!signatureResponse.ok) {
-        throw new Error(signature.message || "无法获取上传签名");
+        throw new Error(signature.message || t("admin.uploadSignatureFailed"));
       }
 
       const urls: string[] = [];
@@ -60,15 +62,15 @@ export function CloudinaryUploadButton({
         });
         const data = await uploadResponse.json();
         if (!uploadResponse.ok || !data.secure_url) {
-          throw new Error(data.error?.message || "图片上传失败");
+          throw new Error(data.error?.message || t("admin.uploadFailed"));
         }
         urls.push(data.secure_url);
       }
 
       onUploaded(urls);
-      setMessage(`已上传 ${urls.length} 张图片`);
+      setMessage(t("admin.uploadedImages", { count: urls.length }));
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "图片上传失败");
+      setMessage(error instanceof Error ? error.message : t("admin.uploadFailed"));
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = "";
@@ -80,7 +82,7 @@ export function CloudinaryUploadButton({
       <input ref={inputRef} type="file" accept="image/*" multiple={multiple} className="hidden" onChange={(event) => upload(event.target.files)} />
       <button type="button" onClick={() => inputRef.current?.click()} disabled={uploading} className="inline-flex items-center gap-2 rounded-lg bg-leaf px-3 py-2 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-60">
         <UploadCloud size={16} />
-        {uploading ? "上传中..." : multiple ? "上传图片" : "上传封面"}
+        {uploading ? t("admin.uploading") : multiple ? t("admin.uploadImages") : t("admin.uploadCover")}
       </button>
       {message ? <p className="text-sm text-stone-500">{message}</p> : null}
     </div>

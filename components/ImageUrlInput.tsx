@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export function ImageUrlInput({
   values,
@@ -12,6 +13,7 @@ export function ImageUrlInput({
   placeholder?: string;
 }) {
   const [text, setText] = useState(values.join("\n"));
+  const { t } = useLanguage();
 
   useEffect(() => {
     setText(values.join("\n"));
@@ -31,7 +33,7 @@ export function ImageUrlInput({
     <textarea
       value={text}
       onChange={(event) => update(event.target.value)}
-      placeholder={`${placeholder}\n一行一个图片 URL，空行会自动忽略`}
+      placeholder={`${placeholder}\n${t("admin.imageInputPlaceholderSuffix")}`}
       rows={5}
       className="w-full rounded-lg border border-orange-200 bg-white px-3 py-2 outline-none focus:border-salmon"
     />

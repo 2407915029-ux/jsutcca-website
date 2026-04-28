@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { CatStatusBadge } from "@/components/StatusBadge";
-import { genderLabels } from "@/lib/labels";
+import { T } from "@/components/LanguageProvider";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +23,7 @@ export default async function CatDetailPage({ params }: { params: { id: string }
               <div className="grid grid-cols-3 gap-3">
                 {images.slice(1).map((image) => (
                   <div key={image} className="relative aspect-square overflow-hidden rounded-lg bg-orange-50">
-                    <Image src={image} alt={`${cat.name}照片`} fill className="object-cover" />
+                    <Image src={image} alt={`${cat.name} photo`} fill className="object-cover" />
                   </div>
                 ))}
               </div>
@@ -32,27 +32,27 @@ export default async function CatDetailPage({ params }: { params: { id: string }
           <div>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-bold text-salmon">猫咪详情</p>
+                <p className="text-sm font-bold text-salmon"><T k="cats.detail" /></p>
                 <h1 className="mt-2 text-3xl font-bold">{cat.name}</h1>
               </div>
               <CatStatusBadge status={cat.status} />
             </div>
             <div className="mt-6 grid gap-3 text-sm text-stone-700 sm:grid-cols-2">
-              <Info label="性别" value={genderLabels[cat.gender]} />
-              <Info label="年龄" value={cat.age || "待补充"} />
-              <Info label="花色" value={cat.color || "待补充"} />
-              <Info label="常出没地点" value={cat.location || "待补充"} />
-              <Info label="健康情况" value={cat.healthStatus || "待补充"} />
-              <Info label="绝育情况" value={cat.sterilized ? "已绝育" : "未绝育"} />
-              <Info label="驱虫情况" value={cat.dewormed ? "已驱虫" : "未驱虫"} />
-              <Info label="亲人程度" value={cat.friendly ? "亲人" : "待观察"} />
+              <Info labelKey="common.gender" valueKey={`gender.${cat.gender}`} />
+              <Info labelKey="cats.age" value={cat.age} fallbackKey="common.notProvided" />
+              <Info labelKey="cats.color" value={cat.color} fallbackKey="common.notProvided" />
+              <Info labelKey="cats.frequentLocation" value={cat.location} fallbackKey="common.notProvided" />
+              <Info labelKey="cats.health" value={cat.healthStatus} fallbackKey="common.notProvided" />
+              <Info labelKey="cats.sterilizedStatus" valueKey={cat.sterilized ? "cats.sterilized" : "cats.notSterilized"} />
+              <Info labelKey="cats.dewormedStatus" valueKey={cat.dewormed ? "cats.dewormed" : "cats.notDewormed"} />
+              <Info labelKey="cats.friendliness" valueKey={cat.friendly ? "cats.friendly" : "cats.observe"} />
             </div>
-            <Section title="简介" content={cat.description} />
-            <Section title="性格描述" content={cat.personality} />
-            <Section title="救助记录" content={cat.rescueRecord} />
-            <Section title="医疗记录" content={cat.medicalRecord} />
-            <Section title={cat.status === "deceased" ? "纪念文字" : "领养要求或备注"} content={cat.adoptionRequirements || (cat.status === "deceased" ? "谢谢它曾经来到校园，也谢谢每一位记得它的人。" : "如有领养意向，请联系喵喵队志愿者。")} />
-            <div className="mt-6 rounded-lg bg-cream p-4 text-sm leading-7 text-stone-700">联系方式占位：后续可填写社群二维码、邮箱或志愿者联系方式。</div>
+            <Section titleKey="cats.intro" content={cat.description} />
+            <Section titleKey="cats.personality" content={cat.personality} />
+            <Section titleKey="cats.rescueRecord" content={cat.rescueRecord} />
+            <Section titleKey="cats.medicalRecord" content={cat.medicalRecord} />
+            <Section titleKey={cat.status === "deceased" ? "cats.memorialText" : "cats.adoptionNotes"} content={cat.adoptionRequirements} fallbackKey={cat.status === "deceased" ? "cats.memorialDefault" : "cats.adoptionDefault"} />
+            <div className="mt-6 rounded-lg bg-cream p-4 text-sm leading-7 text-stone-700"><T k="cats.contactPlaceholder" /></div>
           </div>
         </div>
       </div>
@@ -60,21 +60,21 @@ export default async function CatDetailPage({ params }: { params: { id: string }
   );
 }
 
-function Info({ label, value }: { label: string; value: string }) {
+function Info({ labelKey, value, valueKey, fallbackKey }: { labelKey: string; value?: string | null; valueKey?: string; fallbackKey?: string }) {
   return (
     <div className="rounded-lg bg-cream p-3">
-      <p className="text-xs text-stone-500">{label}</p>
-      <p className="mt-1 font-semibold">{value}</p>
+      <p className="text-xs text-stone-500"><T k={labelKey} /></p>
+      <p className="mt-1 font-semibold">{valueKey ? <T k={valueKey} /> : value || (fallbackKey ? <T k={fallbackKey} /> : null)}</p>
     </div>
   );
 }
 
-function Section({ title, content }: { title: string; content?: string | null }) {
-  if (!content) return null;
+function Section({ titleKey, content, fallbackKey }: { titleKey: string; content?: string | null; fallbackKey?: string }) {
+  if (!content && !fallbackKey) return null;
   return (
     <section className="mt-6">
-      <h2 className="font-bold">{title}</h2>
-      <p className="mt-2 whitespace-pre-wrap leading-8 text-stone-700">{content}</p>
+      <h2 className="font-bold"><T k={titleKey} /></h2>
+      <p className="mt-2 whitespace-pre-wrap leading-8 text-stone-700">{content || (fallbackKey ? <T k={fallbackKey} /> : null)}</p>
     </section>
   );
 }

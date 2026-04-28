@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import type { DiaryPost } from "@prisma/client";
 import { ImageUrlInput } from "@/components/ImageUrlInput";
 import { CloudinaryUploadButton } from "@/components/admin/CloudinaryUploadButton";
-import { diaryTypeLabels } from "@/lib/labels";
+import { useLanguage } from "@/components/LanguageProvider";
 
 type DiaryPayload = Omit<DiaryPost, "id" | "createdAt" | "updatedAt" | "likes">;
 
@@ -24,6 +24,16 @@ export function DiaryForm({ post }: { post?: DiaryPost }) {
   const [form, setForm] = useState<DiaryPayload>(post ? { ...post } : emptyDiary);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const { t } = useLanguage();
+  const diaryTypeOptions = {
+    sterilization: t("diaryType.sterilization"),
+    medical: t("diaryType.medical"),
+    feeding: t("diaryType.feeding"),
+    offline_event: t("diaryType.offline_event"),
+    adoption: t("diaryType.adoption"),
+    daily: t("diaryType.daily"),
+    other: t("diaryType.other")
+  };
 
   function setField<K extends keyof DiaryPayload>(key: K, value: DiaryPayload[K]) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -41,7 +51,7 @@ export function DiaryForm({ post }: { post?: DiaryPost }) {
     const data = await response.json();
     setLoading(false);
     if (!response.ok) {
-      setMessage(data.message || "保存失败");
+      setMessage(t("common.saveFailed"));
       return;
     }
     router.push("/admin/diary");
@@ -51,30 +61,30 @@ export function DiaryForm({ post }: { post?: DiaryPost }) {
   return (
     <form onSubmit={submit} className="grid gap-5 rounded-lg bg-white p-5 shadow-soft sm:p-6">
       <div className="grid gap-4 md:grid-cols-2">
-        <Input label="标题（必填）" value={form.title} onChange={(value) => setField("title", value)} required />
+        <Input label={t("admin.diaryTitleRequired")} value={form.title} onChange={(value) => setField("title", value)} required />
         <label className="grid gap-2 text-sm font-semibold">
-          活动类型（必填）
+          {t("admin.diaryTypeRequired")}
           <select value={form.type} onChange={(event) => setField("type", event.target.value as DiaryPayload["type"])} className="rounded-lg border border-orange-200 bg-cream px-3 py-2 outline-none focus:border-salmon">
-            {Object.entries(diaryTypeLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+            {Object.entries(diaryTypeOptions).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
           </select>
         </label>
       </div>
-      <Textarea label="摘要（必填）" value={form.summary} onChange={(value) => setField("summary", value)} required rows={3} />
-      <Textarea label="正文（必填，支持 Markdown）" value={form.content} onChange={(value) => setField("content", value)} required rows={10} />
+      <Textarea label={t("admin.summaryRequired")} value={form.summary} onChange={(value) => setField("summary", value)} required rows={3} />
+      <Textarea label={t("admin.contentRequired")} value={form.content} onChange={(value) => setField("content", value)} required rows={10} />
       <label className="grid gap-2 text-sm font-semibold">
-        封面图片 URL
+        {t("admin.coverImageUrl")}
         <CloudinaryUploadButton folder="meow-team/diary/covers" multiple={false} onUploaded={(urls) => setField("coverImage", urls[0] || "")} />
         <input value={form.coverImage || ""} onChange={(event) => setField("coverImage", event.target.value)} className="rounded-lg border border-orange-200 bg-cream px-3 py-2 outline-none focus:border-salmon" />
       </label>
-      <Input label="视频链接，可填写 mp4、Bilibili 或 YouTube" value={form.videoUrl || ""} onChange={(value) => setField("videoUrl", value)} />
+      <Input label={t("admin.videoUrl")} value={form.videoUrl || ""} onChange={(value) => setField("videoUrl", value)} />
       <label className="grid gap-2 text-sm font-semibold">
-        正文图片 URL <span className="font-normal text-stone-500">一行一个，可手动输入，也可上传到 Cloudinary 后自动填入</span>
+        {t("admin.bodyImageUrls")} <span className="font-normal text-stone-500">{t("admin.imageUrlsHint")}</span>
         <CloudinaryUploadButton folder="meow-team/diary/images" onUploaded={(urls) => setField("images", [...form.images, ...urls])} />
         <ImageUrlInput values={form.images} onChange={(values) => setField("images", values)} placeholder="https://example.com/activity.jpg" />
       </label>
       {message ? <p className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{message}</p> : null}
       <button disabled={loading} className="rounded-lg bg-salmon px-4 py-3 font-semibold text-white hover:bg-orange-700 disabled:opacity-60">
-        {loading ? "保存中..." : "保存活动日记"}
+        {loading ? t("common.saving") : t("admin.saveDiary")}
       </button>
     </form>
   );

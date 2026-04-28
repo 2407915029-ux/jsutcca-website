@@ -10,7 +10,7 @@ export default async function EditDiaryPage({ params }: { params: { id: string }
   if (!post) notFound();
   return (
     <div>
-      <AdminHeader title={`编辑日记：${post.title}`} />
+      <AdminHeader titleKey="admin.editDiary" titleValues={{ title: post.title }} />
       <DiaryForm post={post} />
     </div>
   );
