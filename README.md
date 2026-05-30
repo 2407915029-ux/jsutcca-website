@@ -1,18 +1,18 @@
 # JLG Meow Team
 
-JLG Meow Team is a campus stray cat rescue website with both a public visitor interface and an admin dashboard. The website is used to display campus cat profiles, rescue diaries, donation information, and charity merchandise, while allowing admins to manage the content from the backend.
+JLG Meow Team is a non-profit website I built for a student-led campus stray cat rescue group. The project is created for helping stray cats on campus, sharing rescue updates, and making it easier for students to learn about adoption, donation, and volunteer-related information.
 
-## Website Overview
+The website includes both a public visitor interface and an admin dashboard. Visitors can browse cat profiles and rescue updates, while admins can manage the content from the backend.
 
-The public-facing side includes a homepage, cat list, cat detail pages, rescue diary pages, donation page, and charity merchandise page.
+## Frontend Overview
 
-- The homepage introduces the project and displays featured cats for adoption and recent diary posts.
-- The cat list supports filtering by status, including available, adopted, and in memory.
-- The cat detail page shows basic information, personality, health status, neutering/deworming status, rescue records, medical records, and adoption notes.
-- The rescue diary records activities such as neutering, medical care, feeding, offline events, adoption follow-ups, and daily care.
-- Diary detail pages support images, videos, likes, and comments.
-- The donation page explains how donations are used and provides support methods.
-- The merchandise page displays charity products for fundraising.
+The public-facing side is kept simple and focused:
+
+- Home page for introducing the rescue group and recent updates.
+- Cat pages for browsing campus cats by status, such as available, adopted, or in memory.
+- Cat detail pages for showing each cat's basic information, health status, rescue records, and adoption notes.
+- Rescue diary pages for sharing feeding, medical care, neutering, adoption, and daily care updates.
+- Donation and merchandise pages for showing non-profit support information.
 
 The admin dashboard supports login, data statistics, cat profile management, diary management, image uploads, and comment management.
 
@@ -57,37 +57,6 @@ prisma/                Database schema, migrations, and seed data
 public/                Favicon and placeholder images
 ```
 
-## Local Development
-
-```bash
-npm install
-npx prisma migrate dev
-npx prisma db seed
-npm run dev
-```
-
-Local URLs:
-
-```txt
-Public site: http://localhost:3000
-Admin site:  http://localhost:3000/admin/login
-```
-
-## Environment Variables
-
-Copy `.env.example` to `.env` and fill in the following values:
-
-```env
-DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DATABASE?schema=public"
-ADMIN_USERNAME="admin"
-ADMIN_PASSWORD="your-secure-password"
-JWT_SECRET="at-least-32-random-characters"
-NEXT_PUBLIC_SITE_URL="http://localhost:3000"
-CLOUDINARY_CLOUD_NAME="your-cloud-name"
-CLOUDINARY_API_KEY="your-api-key"
-CLOUDINARY_API_SECRET="your-api-secret"
-NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=""
-```
 
 ## Highlights
 
