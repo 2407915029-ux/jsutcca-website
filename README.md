@@ -1,37 +1,87 @@
-# 江理工喵喵队
+# JLG Meow Team
 
-江理工喵喵队是一个校园流浪猫公益网站，包含访客浏览端和管理员后台。访客可以浏览猫咪、活动日记、捐款方式和公益周边；管理员可以维护猫咪档案、活动日记、图片、视频和评论。
+JLG Meow Team is a campus stray cat rescue website with both a public visitor interface and an admin dashboard. The website is used to display campus cat profiles, rescue diaries, donation information, and charity merchandise, while allowing admins to manage the content from the backend.
 
-## 技术栈
+## Website Overview
+
+The public-facing side includes a homepage, cat list, cat detail pages, rescue diary pages, donation page, and charity merchandise page.
+
+- The homepage introduces the project and displays featured cats for adoption and recent diary posts.
+- The cat list supports filtering by status, including available, adopted, and in memory.
+- The cat detail page shows basic information, personality, health status, neutering/deworming status, rescue records, medical records, and adoption notes.
+- The rescue diary records activities such as neutering, medical care, feeding, offline events, adoption follow-ups, and daily care.
+- Diary detail pages support images, videos, likes, and comments.
+- The donation page explains how donations are used and provides support methods.
+- The merchandise page displays charity products for fundraising.
+
+The admin dashboard supports login, data statistics, cat profile management, diary management, image uploads, and comment management.
+
+## Tech Stack
 
 - Next.js App Router
+- React
 - TypeScript
 - Tailwind CSS
 - Prisma
 - PostgreSQL
+- Cloudinary
+- JWT + httpOnly Cookie
+- Zod
 - Vercel
-- Cloudinary 图片存储
-- JWT + httpOnly Cookie 管理员登录
 
-## 本地开发
+## Technical Implementation
 
-正式版本默认使用 PostgreSQL，不再使用 SQLite，也不依赖本地 `/uploads` 保存图片。
+The project uses Next.js App Router to build both pages and API routes. The frontend is built with reusable React components, and Tailwind CSS is used for responsive layouts and styling.
 
-1. 安装依赖
+For the data layer, Prisma is used with PostgreSQL. The main data models include cat profiles, diary posts, and comments. Cat profiles store information such as name, status, gender, health details, rescue records, and images. Diary posts store title, content, images, video links, likes, and comments. Comments are linked to diary posts through database relations.
+
+Admin authentication is handled through environment-based credentials. After a successful login, the server generates a JWT and stores it in an httpOnly Cookie. Admin pages under `/admin` and backend APIs under `/api/admin/*` are protected.
+
+Image uploads are integrated with Cloudinary. After an admin uploads an image, the system stores only the Cloudinary image URL in the database, which avoids relying on local file storage and makes the project easier to deploy on Vercel.
+
+Diary videos support direct `.mp4` links, Bilibili links, and YouTube links. The project detects the video type and renders it as a player, iframe, or external link.
+
+## Project Structure
+
+```txt
+app/
+  api/                 API routes
+  cats/                Cat list and detail pages
+  diary/               Diary list and detail pages
+  donate/              Donation page
+  shop/                Charity merchandise page
+  admin/               Admin dashboard
+components/            Shared components, admin forms, upload components
+lib/                   Database, auth, validation, video parsing utilities
+prisma/                Database schema, migrations, and seed data
+public/                Favicon and placeholder images
+```
+
+## Local Development
 
 ```bash
 npm install
+npx prisma migrate dev
+npx prisma db seed
+npm run dev
 ```
 
-2. 创建 `.env`
+Local URLs:
 
-复制 `.env.example` 为 `.env`，填写自己的配置：
+```txt
+Public site: http://localhost:3000
+Admin site:  http://localhost:3000/admin/login
+```
+
+## Environment Variables
+
+Copy `.env.example` to `.env` and fill in the following values:
 
 ```env
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DATABASE?schema=public"
 ADMIN_USERNAME="admin"
-ADMIN_PASSWORD="请设置一个强密码"
-JWT_SECRET="请设置至少32位随机字符串"
+ADMIN_PASSWORD="your-secure-password"
+JWT_SECRET="at-least-32-random-characters"
 NEXT_PUBLIC_SITE_URL="http://localhost:3000"
 CLOUDINARY_CLOUD_NAME="your-cloud-name"
 CLOUDINARY_API_KEY="your-api-key"
@@ -39,140 +89,12 @@ CLOUDINARY_API_SECRET="your-api-secret"
 NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=""
 ```
 
-不要把 `.env` 上传到 GitHub。
+## Highlights
 
-3. 检查 Prisma schema
-
-```bash
-npx prisma validate
-```
-
-4. 本地开发迁移数据库
-
-```bash
-npx prisma migrate dev
-```
-
-5. 写入示例数据，仅本地或测试环境使用
-
-```bash
-npx prisma db seed
-```
-
-不要在生产环境自动运行 seed。
-
-6. 启动开发环境
-
-```bash
-npm run dev
-```
-
-访问地址：
-
-```txt
-用户端：http://localhost:3000
-管理员端：http://localhost:3000/admin/login
-```
-
-## 生产部署命令
-
-生产环境只运行 migration，不使用 `prisma db push`，也不自动运行 seed。
-
-```bash
-npm install
-npx prisma migrate deploy
-npm run build
-```
-
-## 管理员安全
-
-- 管理员账号密码来自环境变量。
-- 密码不要写死在代码里。
-- 正式上线前请设置强密码和足够长的 `JWT_SECRET`。
-- 登录成功后使用 httpOnly Cookie 保存 JWT。
-- Cookie 在生产环境会启用 `secure: true`，并设置 `sameSite: "lax"`。
-- `/admin` 页面需要登录。
-- `/api/admin/*` 接口需要登录。
-
-## 图片和视频
-
-- 猫咪图片和活动日记图片保存为 PostgreSQL `String[]`。
-- 管理员后台支持 Cloudinary 上传图片，上传后只保存 Cloudinary 返回的 `secure_url`。
-- 图片字段也保留手动输入 URL 的备用方式，一行一个 URL。
-- 活动日记支持 `videoUrl`。
-- `.mp4` 直链使用播放器展示。
-- Bilibili 和 YouTube 链接会转为 iframe 展示。
-- 无法识别的视频链接会显示为外部链接。
-
-## 项目结构
-
-```txt
-app/
-  api/                 API 路由
-  cats/                猫咪列表和详情
-  diary/               活动日记列表和详情
-  donate/              捐款途径
-  shop/                周边商品
-  admin/               管理员后台
-components/            通用组件、后台表单、Cloudinary 上传控件
-lib/                   Prisma、鉴权、校验、视频解析、Cloudinary 签名
-prisma/
-  migrations/          Prisma migration 文件
-  schema.prisma        PostgreSQL 数据模型
-  seed.ts              示例数据
-public/                favicon 和占位图片
-DEPLOYMENT.md          Vercel 上线部署说明
-```
-
-## 不要提交到 GitHub 的文件
-
-这些文件已经写入 `.gitignore`：
-
-```txt
-.env
-.env.local
-node_modules
-.next
-dev.db
-*.db
-prisma/dev.db
-```
-
-`.env.example` 可以提交，它只放示例配置，不放真实密码、数据库地址或 API Secret。
-
-## 常用命令
-
-```bash
-npm run dev
-npm run build
-npm run lint
-npx prisma validate
-npx prisma migrate dev
-npx prisma migrate deploy
-npx prisma db seed
-```
-
-## 上线前验收清单
-
-- [ ] 首页能打开
-- [ ] 猫咪列表能打开
-- [ ] 猫咪详情能打开
-- [ ] 捐款页面能打开
-- [ ] 周边商品页面能打开
-- [ ] 活动日记列表能打开
-- [ ] 活动日记详情能打开
-- [ ] 点赞功能正常
-- [ ] 评论功能正常
-- [ ] 管理员可以登录
-- [ ] 管理员可以新增猫咪
-- [ ] 管理员可以编辑猫咪
-- [ ] 管理员可以删除猫咪
-- [ ] 管理员可以新增活动日记
-- [ ] 管理员可以编辑活动日记
-- [ ] 管理员可以删除活动日记
-- [ ] 管理员可以删除评论
-- [ ] 图片可以正常显示
-- [ ] 视频可以正常显示
-- [ ] 手机端浏览正常
-- [ ] Vercel 部署成功
-- [ ] 域名绑定成功
+- Designed for a real campus stray cat rescue scenario.
+- Includes both public pages and an admin content management dashboard.
+- Supports cat profiles, rescue diaries, likes, comments, image uploads, and video display.
+- Uses Prisma and PostgreSQL for structured data management.
+- Uses JWT and httpOnly Cookie for admin authentication.
+- Uses Cloudinary for online image storage.
+- Ready to deploy on Vercel.
