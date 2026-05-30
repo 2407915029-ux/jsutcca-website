@@ -39,7 +39,7 @@ export default async function HomePage() {
             </p>
           </div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-orange-50 shadow-soft">
-            <Image src="/placeholder-cat.svg" alt="JLG Meow Team cat placeholder" fill className="object-cover" priority />
+            <Image src="/campus-stray-cat-rescue.jpg?v=20260531" alt="Campus Stray Cat Rescue" fill className="object-cover" priority />
           </div>
         </div>
       </section>

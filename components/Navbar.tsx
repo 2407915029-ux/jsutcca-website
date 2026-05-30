@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Cat, HeartHandshake } from "lucide-react";
+import Image from "next/image";
+import { HeartHandshake } from "lucide-react";
 import { getAdminSession } from "@/lib/auth";
 import { T } from "@/components/LanguageProvider";
 import { LanguageToggle } from "@/components/LanguageToggle";
@@ -19,8 +20,8 @@ export async function Navbar() {
     <header className="sticky top-0 z-40 border-b border-orange-100 bg-cream/95 backdrop-blur">
       <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
         <Link href="/" className="flex items-center gap-2 text-lg font-bold">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-salmon text-white">
-            <Cat size={22} />
+          <span className="relative h-10 w-10 overflow-hidden rounded-full bg-white">
+            <Image src="/jsutcca-logo.jpg?v=20260531" alt="JSUTCCA logo" fill className="object-cover" priority />
           </span>
           <T k="site.name" />
         </Link>

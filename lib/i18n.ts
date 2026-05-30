@@ -257,7 +257,7 @@ export const translations = {
   },
   en: {
     site: {
-      name: "JLG Meow Team",
+      name: "JSUTCCA",
       tagline: "Campus Cat Rescue / Neutering / Medical Care / Adoption",
       footerTagline: "Campus Cat Rescue / Neutering / Medical Care / Adoption / Public Events"
     },
@@ -427,7 +427,7 @@ export const translations = {
       empty: "No comments yet. Be the first to leave one."
     },
     admin: {
-      brand: "JLG Meow Team",
+      brand: "JSUTCCA",
       logout: "Log Out",
       loginEyebrow: "Admin Portal",
       loginTitle: "Admin Login",
@@ -508,6 +508,8 @@ export const translations = {
 export type TranslationKey = string;
 
 export function translate(language: Language, key: TranslationKey, values?: Record<string, string | number>) {
+  if (key === "site.name" || key === "admin.brand") return "JSUTCCA";
+
   const text = readPath(translations[language], key) ?? readPath(translations.zh, key) ?? key;
   if (typeof text !== "string") return key;
   return interpolate(text, values);
