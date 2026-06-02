@@ -508,8 +508,6 @@ export const translations = {
 export type TranslationKey = string;
 
 export function translate(language: Language, key: TranslationKey, values?: Record<string, string | number>) {
-  if (key === "site.name" || key === "admin.brand") return "JSUTCCA";
-
   const text = readPath(translations[language], key) ?? readPath(translations.zh, key) ?? key;
   if (typeof text !== "string") return key;
   return interpolate(text, values);
