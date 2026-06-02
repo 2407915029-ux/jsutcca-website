@@ -34,7 +34,6 @@ The admin dashboard supports login, data statistics, cat profile management, dia
 The project uses Next.js App Router to build both pages and API routes. The frontend is built with reusable React components, and Tailwind CSS is used for responsive layouts and styling.
 
 For the data layer, Prisma is used with PostgreSQL. The main data models include cat profiles, diary posts, and comments. Cat profiles store information such as name, status, gender, health details, rescue records, and images. Diary posts store title, content, images, video links, likes, and comments. Comments are linked to diary posts through database relations.
-
 Admin authentication is handled through environment-based credentials. After a successful login, the server generates a JWT and stores it in an httpOnly Cookie. Admin pages under `/admin` and backend APIs under `/api/admin/*` are protected.
 
 Image uploads are integrated with Cloudinary. After an admin uploads an image, the system stores only the Cloudinary image URL in the database, which avoids relying on local file storage and makes the project easier to deploy on Vercel.
@@ -57,6 +56,37 @@ prisma/                Database schema, migrations, and seed data
 public/                Favicon and placeholder images
 ```
 
+## Local Development
+
+```bash
+npm install
+npx prisma migrate dev
+npx prisma db seed
+npm run dev
+```
+
+Local URLs:
+
+```txt
+Public site: http://localhost:3000
+Admin site:  http://localhost:3000/admin/login
+```
+
+## Environment Variables
+
+Copy `.env.example` to `.env` and fill in the following values:
+
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DATABASE?schema=public"
+ADMIN_USERNAME="admin"
+ADMIN_PASSWORD="your-secure-password"
+JWT_SECRET="at-least-32-random-characters"
+NEXT_PUBLIC_SITE_URL="https://www.jsutcca.com"
+CLOUDINARY_CLOUD_NAME="your-cloud-name"
+CLOUDINARY_API_KEY="your-api-key"
+CLOUDINARY_API_SECRET="your-api-secret"
+NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=""
+```
 
 ## Highlights
 
